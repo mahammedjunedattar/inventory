@@ -69,7 +69,10 @@ export async function POST(request) {
     });
 
     const tokenData = { id: user.insertedId }; // Use inserted ID for user
-    const authtoken = jwt.sign(tokenData, uri);
+    const jwtSecret = process.env.JWT_SECRET;
+
+    const authtoken = jwt.sign(tokenData, jwtSecret, { expiresIn: '1h' }); // Set an expiration time for the token
+
 
     return NextResponse.json({ message: 'Document inserted', authtoken, ok: true }, { status: 201 });
   } catch (e) {

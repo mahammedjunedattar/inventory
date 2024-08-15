@@ -47,11 +47,15 @@ export async function POST(request) {
 
     let user = await collection.findOne({ email: data.email });
     if (!user) {
-      return NextResponse.json({ error: 'user cant find' }, { status: 500 });
+      // Return 404 if user is not found
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ message: 'user exists', ok: true }, { status: 201 });
+    // Return 200 OK if user exists
+    return NextResponse.json({ message: 'User exists', ok: true }, { status: 200 });
   } catch (e) {
-    return NextResponse.json({ details: 'user doesnt exist' }, { status: 500 });
+    // Log the error and return a 500 Internal Server Error response
+    console.error(e);
+    return NextResponse.json({ error: 'An error occurred', details: e.message }, { status: 500 });
   }
 }

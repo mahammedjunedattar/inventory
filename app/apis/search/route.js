@@ -17,10 +17,10 @@ async function connectToDatabase() {
     const client = new MongoClient(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 30000,
-        tls: true,
-        tlsAllowInvalidCertificates: true,
-        tlsAllowInvalidHostnames: true
+        serverSelectionTimeoutMS: 30000, // Adjust timeout as needed
+        tls: true, // Use TLS for secure connection
+        tlsAllowInvalidCertificates: true, // Allow invalid certificates (for development only)
+        tlsAllowInvalidHostnames: true // Allow invalid hostnames (for development only)
     });
 
     cachedClient = await client.connect();
@@ -42,20 +42,20 @@ export async function GET(request) {
         const pipeline = [
             {
                 $search: {
-                    index: 'default', // Ensure you have an appropriate search index configured in your MongoDB Atlas
+                    index: 'default', // Ensure you have an appropriate search index configured in MongoDB Atlas
                     text: {
                         query: q,
                         path: 'name' // The field to search on
                     }
                 }
             },
-            { $limit: 10 }
+            { $limit: 10 } // Limit the number of results
         ];
         const results = await collection.aggregate(pipeline).toArray();
 
         return NextResponse.json(results, { status: 200 });
     } catch (e) {
-        console.error(e);
-        return NextResponse.json({ error: 'Unable to search the database', details: e.message }, { status: 500 });
+        console.error(e); // Log error details
+        return NextResponse.json({ error: 'Unable to search the database', details: e.message }, { status: 500 }); // Internal Server Error
     }
 }
