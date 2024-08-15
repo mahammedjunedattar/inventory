@@ -2,8 +2,7 @@ import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 import { body, validationResult } from 'express-validator';
 
-// Replace with your actual connection string (avoid storing in code)
-const uri = "mongodb://junedattar455:qNpORoxFrz3xn9RI@ac-eecfgef-shard-00-00.ladkaob.mongodb.net:27017,ac-eecfgef-shard-00-01.ladkaob.mongodb.net:27017,ac-eecfgef-shard-00-02.ladkaob.mongodb.net:27017/?ssl=true&replicaSet=atlas-8nj8fx-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.MONGODB_URI;
 
 let cachedClient = null;
 
@@ -46,15 +45,13 @@ export async function POST(request) {
     const db = client.db('credintial');
     const collection = db.collection('secure');
 
+    let user = await collection.findOne({ email: data.email });
+    if (!user) {
+      return NextResponse.json({ error: 'user cant find' }, { status: 500 });
+    }
 
-let user = await collection.findOne({email:data.email})
-if (!user) {
-    return NextResponse.json({ error: 'user cant find', details: e.message }, { status: 500 });
-
-    
-}
-    return NextResponse.json({ message: 'user exist',  ok: true }, { status: 201 });
+    return NextResponse.json({ message: 'user exists', ok: true }, { status: 201 });
   } catch (e) {
-    return NextResponse.json({  details: 'user doesnt exist' }, { status: 500 });
+    return NextResponse.json({ details: 'user doesnt exist' }, { status: 500 });
   }
 }
