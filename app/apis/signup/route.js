@@ -73,7 +73,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'JWT_SECRET environment variable is missing' }, { status: 500 });
     }
 
-    const authtoken = jwt.sign(tokenData, 'abbaammi@123', { expiresIn: '1h' });
+    const authtoken = jwt.sign(tokenData, jwtSecret, { expiresIn: '1h' });
 
     return NextResponse.json({ message: 'Document inserted', authtoken, ok: true }, { status: 201 });
   } catch (e) {

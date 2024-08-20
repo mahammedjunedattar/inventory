@@ -22,15 +22,13 @@ async function connectToDatabase() {
         tlsAllowInvalidCertificates: true, // Allow invalid certificates (for development only)
         tlsAllowInvalidHostnames: true // Allow invalid hostnames (for development only)
     });
-    console.log(`MongoDB Connected: ${client.connection.host}`);
-
 
     cachedClient = await client.connect();
     return cachedClient;
 }
 
 export async function GET(request) {
-    const { searchParams } = new URL(request.url, `http://${request.headers.get('host')}`);
+    const { searchParams } = request.nextUrl; // Use request.nextUrl instead of manually constructing the URL
     const q = searchParams.get('q');
 
     if (!q || typeof q !== 'string' || q.trim() === '') {
