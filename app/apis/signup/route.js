@@ -4,7 +4,6 @@ import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Replace with your actual connection string (avoid storing in code)
 const uri = process.env.MONGODB_URI;
 
 let cachedClient = null;
@@ -21,7 +20,6 @@ async function connectToDatabase() {
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    // ... other connection options
   });
 
   cachedClient = await client.connect();
@@ -68,11 +66,14 @@ export async function POST(request) {
       password: hashedPassword,
     });
 
-    const tokenData = { id: user.insertedId }; // Use inserted ID for user
+    const tokenData = { id: user.insertedId };
     const jwtSecret = process.env.JWT_SECRET;
 
-    const authtoken = jwt.sign(tokenData, jwtSecret, { expiresIn: '1h' }); // Set an expiration time for the token
+    if (!jwtSecret) {
+      return NextResponse.json({ error: 'JWT_SECRET environment variable is missing' }, { status: 500 });
+    }
 
+    const authtoken = jwt.sign(tokenData, 'abbaammi@123', { expiresIn: '1h' });
 
     return NextResponse.json({ message: 'Document inserted', authtoken, ok: true }, { status: 201 });
   } catch (e) {

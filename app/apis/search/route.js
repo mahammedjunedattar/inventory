@@ -22,6 +22,8 @@ async function connectToDatabase() {
         tlsAllowInvalidCertificates: true, // Allow invalid certificates (for development only)
         tlsAllowInvalidHostnames: true // Allow invalid hostnames (for development only)
     });
+    console.log(`MongoDB Connected: ${client.connection.host}`);
+
 
     cachedClient = await client.connect();
     return cachedClient;
